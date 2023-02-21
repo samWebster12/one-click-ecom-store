@@ -7,6 +7,7 @@ import serveStatic from "serve-static";
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
+import { checkForSession } from "./utils/checkForSession.js";
 
 const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 
@@ -30,9 +31,46 @@ app.post(
 );
 
 // All endpoints after this point will require an active session
-app.use("/api/*", shopify.validateAuthenticatedSession());
+
+// Validate Session Id Manually Since the Default doesn't work
+//app.use("/api/*", shopify.validateAuthenticatedSession());
+app.use('/api/*', checkForSession)
 
 app.use(express.json());
+
+//------------------------------ MY ENDPOINTS ---------------------------------------------------------------
+
+app.get('/api/2023-01/products.json', async (req, res) => {
+  try {
+    const response = await shopify.api.rest.Product.all({
+      session: res.locals.shopify.session
+    });
+
+    res.status(200).send(response);
+
+  } catch(err) {
+
+    res.status(500).send(err);
+  }
+});
+
+app.get('/api/collections/435547210003', async (req, res) => {
+  try {
+    const response = await shopify.api.rest.Collection.find({
+      session: res.locals.shopify.session,
+      id: 435547210003
+    });
+
+    res.status(200).send(response);
+
+  } catch(err) {
+
+    res.status(500).send(err);
+  }
+})
+
+
+//---------------------------------------------------------------------------------------------
 
 app.get("/api/products/count", async (_req, res) => {
   const countData = await shopify.api.rest.Product.count({
@@ -65,3 +103,4 @@ app.use("/*", shopify.ensureInstalledOnShop(), async (_req, res, _next) => {
 });
 
 app.listen(PORT);
+
