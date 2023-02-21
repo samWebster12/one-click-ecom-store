@@ -10,46 +10,26 @@ import {
   Button,
   Modal
 } from "@shopify/polaris";
-import { TitleBar } from "@shopify/app-bridge-react";
-import {useState, useCallback, useRef} from 'react';
-import axios from 'axios';
 
+import { TitleBar } from "@shopify/app-bridge-react";
+
+import {useState, useCallback, useRef} from 'react';
+
+import { useAuthenticatedFetch } from "../hooks";
 
 import { trophyImage } from "../assets";
 
-import { ProductsCard } from "../components";
 
 export default function HomePage() {
+  const fetch = useAuthenticatedFetch();
+  
   const [active, setActive] = useState(true);
 
   const handleChange = useCallback(() => setActive(!active), [active]);
 
-  const fetchCollection = async () => {
-    try {
-      const response = await fetch('/api/collections/435547210003');
-      console.log(await response.json());
-    } catch(err) {
-
-      console.log(err);
-    }
-  }
-
-  fetchCollection();
-
-  const getProductCount = async () => {
-    try {
-      const response = await axios.get('/api/products/count');
-      console.log(await response.json());
-
-    } catch(err) {
-
-      console.log(err);
-    }
-  }
-
   const getProducts = async () => {
     try {
-      const response = await axios.get('/api/2023-01/products.json');
+      const response = await fetch('/api/2023-01/products.json');
       console.log(await response.json());
 
     } catch(err) {
@@ -113,7 +93,7 @@ export default function HomePage() {
         title="Lets Create Your Product Descriptions"
         primaryAction={{
           content: 'Generate New Product Descriptions',
-          onAction: getProductCount,
+          onAction: getProducts,
         }}
 
       >
