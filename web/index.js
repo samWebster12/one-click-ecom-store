@@ -52,11 +52,19 @@ app.get('/api/2023-01/products.json', async (req, res) => {
   }
 });
 
-app.get('/api/collections/435547210003', async (req, res) => {
+app.put('/api/2023-01/products/:productId', async (req, res) => {
+ // console.log('id: ' + req.body.id + '\t\tdescription: ' + req.body.description)
   try {
-    const response = await shopify.api.rest.Collection.find({
-      session: res.locals.shopify.session,
-      id: 435547210003
+    const productId = req.params.productId.split('.')[0];
+    console.log('update product: ' + productId);
+    const product = new shopify.api.rest.Product({session: res.locals.shopify.session});
+    product.id = Number(productId);
+
+    product.body_html = "Brand new description";
+
+
+    const response = await product.save({
+      update: true,
     });
 
     res.status(200).send(response);
@@ -66,6 +74,7 @@ app.get('/api/collections/435547210003', async (req, res) => {
     res.status(500).send(err);
   }
 })
+
 
 
 //---------------------------------------------------------------------------------------------

@@ -18,6 +18,7 @@ import {useState, useCallback, useRef} from 'react';
 import { useAuthenticatedFetch } from "../hooks";
 
 import { trophyImage } from "../assets";
+import { ProductStatus } from "@shopify/app-bridge/actions/ResourcePicker";
 
 
 export default function HomePage() {
@@ -37,13 +38,44 @@ export default function HomePage() {
     }
   }
 
+  //getProducts();
+
+  const updateProduct = async () => {
+    try {
+      const response = await fetch('/api/2023-01/products/8129604321555.json', { method: 'PUT' });
+      console.log(response);
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
 
   const genNewProductDescriptions = async () => {
-    /*const products = await shopify.rest.Product.all({
-      session: session,
-    });*/
+    try {
+      const response = await fetch('/api/2023-01/products.json');
+      const products = await response.json();
 
-    console.log(products)
+
+      products.forEach(async (product) => {
+        console.log('product 1: ');
+        console.log(product);
+
+        //Generate New Description
+        const description = 'test description';
+
+        const url = '/api/2023-01/products/' + product.id + '.json'
+
+        console.log('test')
+        const response = await fetch(url, { method: 'PUT' })
+
+        console.log(response);
+
+      })
+
+    } catch(err) {
+      console.log(err);
+    }
+
   }
 
   const modal_activator = useRef();
@@ -93,7 +125,7 @@ export default function HomePage() {
         title="Lets Create Your Product Descriptions"
         primaryAction={{
           content: 'Generate New Product Descriptions',
-          onAction: getProducts,
+          onAction: genNewProductDescriptions,
         }}
 
       >
