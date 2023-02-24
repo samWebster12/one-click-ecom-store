@@ -38,6 +38,7 @@ app.use(express.json());
 
 //------------------------------ MY ENDPOINTS ---------------------------------------------------------------
 
+//Get all products
 app.get('/api/2023-01/products.json', async (req, res) => {
   try {
     const response = await shopify.api.rest.Product.all({
@@ -52,6 +53,7 @@ app.get('/api/2023-01/products.json', async (req, res) => {
   }
 });
 
+//Update Single Product
 app.put('/api/2023-01/products/:productId', async (req, res) => {
  // console.log('id: ' + req.body.id + '\t\tdescription: ' + req.body.description)
   try {
@@ -74,6 +76,8 @@ app.put('/api/2023-01/products/:productId', async (req, res) => {
     res.status(500).send(err);
   }
 })
+
+
 
 
 

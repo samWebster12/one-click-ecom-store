@@ -18,8 +18,8 @@ import {useState, useCallback, useRef} from 'react';
 import { useAuthenticatedFetch } from "../hooks";
 
 import { trophyImage } from "../assets";
-import { ProductStatus } from "@shopify/app-bridge/actions/ResourcePicker";
 
+import { ProductSelector } from '../components/ProductSelector';
 
 export default function HomePage() {
   const fetch = useAuthenticatedFetch();
@@ -81,7 +81,9 @@ export default function HomePage() {
   const modal_activator = useRef();
 
   return (
+    
     <Page narrowWidth>
+      <ProductSelector></ProductSelector>
       <TitleBar title="One Click Ecom Store" primaryAction={null} />
       <Layout>
         <Layout.Section>
