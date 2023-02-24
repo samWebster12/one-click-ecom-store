@@ -20,6 +20,8 @@ import { useAuthenticatedFetch } from "../hooks";
 import { trophyImage } from "../assets";
 
 import { ProductSelector } from '../components/ProductSelector';
+import { ProductsCard } from '../components/ProductsCard';
+import { ProductTest } from '../components/ProductTest';
 
 export default function HomePage() {
   const fetch = useAuthenticatedFetch();
@@ -84,6 +86,8 @@ export default function HomePage() {
     
     <Page narrowWidth>
       <ProductSelector></ProductSelector>
+      <ProductsCard></ProductsCard>
+      <ProductTest></ProductTest>
       <TitleBar title="One Click Ecom Store" primaryAction={null} />
       <Layout>
         <Layout.Section>

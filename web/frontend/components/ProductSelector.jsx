@@ -1,54 +1,92 @@
-import {useState, useCallback, useRef} from 'react';
-import { useAuthenticatedFetch } from "../hooks";
+import { useState, useCallback } from "react";
 import {
+  Card,
+  Heading,
+  TextContainer,
+  DisplayText,
+  TextStyle,
   Select
 } from "@shopify/polaris";
+import { Toast } from "@shopify/app-bridge-react";
+import { useAppQuery, useAuthenticatedFetch } from "../hooks";
 
-export async function ProductSelector() {
-  const fetch = useAuthenticatedFetch();
-
-  const [selected, setSelected] = useState('today');
-
+export function ProductSelector() {
+  const emptyToastProps = { content: null };
+  const [isLoading, setIsLoading] = useState(true);
+  const [toastProps, setToastProps] = useState(emptyToastProps);
+  const [selected, setSelected] = useState();
+  const [options, setOptions] = useState([]);
   const handleSelectChange = useCallback((value) => setSelected(value), []);
 
-  const options = [
-    {label: 'Today', value: 'today'},
-    {label: 'Yesterday', value: 'yesterday'},
-    {label: 'Last 7 days', value: 'lastWeek'},
-  ];
-  
+  const fetch = useAuthenticatedFetch();
 
-  const getOptions = async () => {
-    try {
-      const response = await fetch('/api/2023-01/products.json');
-      const products = await response.json();
-      let options = [];
+  const {
+    data,
+    refetch: refetchProductCount,
+    isLoading: isLoadingCount,
+    isRefetching: isRefetchingCount,
+  } = useAppQuery({
+    url: "/api/2023-01/products.json",
+    reactQueryOptions: {
+      onSuccess: () => {
+        setIsLoading(false);
+        console.log
+        let options = [];
+        data.forEach((product) => {
+          const option = {
+              label: product.title,
+              value: product.title
+          }
+          options.push(option);
+        });
 
-      console.log(products);
-      products.forEach((product) => {
-        const option = {
-            label: product.title
-        }
+        setOptions(options);
+        
+      },
+    },
+  });
 
-        options.push(option);
-      })
-
-      return options;
-
-    } catch(err) {
-      console.log(err);
-    }
-  }
-  console.log('GET OPTIONS:')
-  options = await getOptions();
-  
+  const toastMarkup = toastProps.content && !isRefetchingCount && (
+    <Toast {...toastProps} onDismiss={() => setToastProps(emptyToastProps)} />
+  );
 
   return (
     <Select
-      label="Products"  
+      label="Products"
       options={options}
       onChange={handleSelectChange}
       value={selected}
     />
   );
+
+  /*
+  return (
+    <>
+      {toastMarkup}
+      <Card
+        title="Product Counter"
+        sectioned
+        primaryFooterAction={{
+          content: "Populate 5 products",
+          onAction: handlePopulate,
+          loading: isLoading,
+        }}
+      >
+        <TextContainer spacing="loose">
+          <p>
+            Sample products are created with a default title and price. You can
+            remove them at any time.
+          </p>
+          <Heading element="h4">
+            TOTAL PRODUCTS
+            <DisplayText size="medium">
+              <TextStyle variation="strong">
+                {isLoadingCount ? "-" : data.count}
+              </TextStyle>
+            </DisplayText>
+          </Heading>
+        </TextContainer>
+      </Card>
+    </>
+  );*/
 }
