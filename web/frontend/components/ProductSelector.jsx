@@ -5,15 +5,14 @@ import {
   TextContainer,
   DisplayText,
   TextStyle,
-  Select
+  Select,
+  TextField
 } from "@shopify/polaris";
 import { Toast } from "@shopify/app-bridge-react";
 import { useAppQuery, useAuthenticatedFetch } from "../hooks";
 
 export function ProductSelector() {
-  const emptyToastProps = { content: null };
   const [isLoading, setIsLoading] = useState(true);
-  const [toastProps, setToastProps] = useState(emptyToastProps);
   const [selected, setSelected] = useState();
   const [options, setOptions] = useState([]);
   const handleSelectChange = useCallback((value) => setSelected(value), []);
@@ -28,14 +27,14 @@ export function ProductSelector() {
   } = useAppQuery({
     url: "/api/2023-01/products.json",
     reactQueryOptions: {
-      onSuccess: () => {
+      onSuccess: (newData) => {
         setIsLoading(false);
-        console.log
         let options = [];
-        data.forEach((product) => {
+        newData.forEach((product) => {
           const option = {
               label: product.title,
-              value: product.title
+              value: product.title,
+              description: product.body_html
           }
           options.push(option);
         });
@@ -46,10 +45,6 @@ export function ProductSelector() {
     },
   });
 
-  const toastMarkup = toastProps.content && !isRefetchingCount && (
-    <Toast {...toastProps} onDismiss={() => setToastProps(emptyToastProps)} />
-  );
-
   return (
     <Select
       label="Products"
@@ -59,34 +54,4 @@ export function ProductSelector() {
     />
   );
 
-  /*
-  return (
-    <>
-      {toastMarkup}
-      <Card
-        title="Product Counter"
-        sectioned
-        primaryFooterAction={{
-          content: "Populate 5 products",
-          onAction: handlePopulate,
-          loading: isLoading,
-        }}
-      >
-        <TextContainer spacing="loose">
-          <p>
-            Sample products are created with a default title and price. You can
-            remove them at any time.
-          </p>
-          <Heading element="h4">
-            TOTAL PRODUCTS
-            <DisplayText size="medium">
-              <TextStyle variation="strong">
-                {isLoadingCount ? "-" : data.count}
-              </TextStyle>
-            </DisplayText>
-          </Heading>
-        </TextContainer>
-      </Card>
-    </>
-  );*/
 }

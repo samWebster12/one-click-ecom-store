@@ -22,13 +22,16 @@ import { trophyImage } from "../assets";
 import { ProductSelector } from '../components/ProductSelector';
 import { ProductsCard } from '../components/ProductsCard';
 import { ProductTest } from '../components/ProductTest';
+import { ProductTextField } from '../components/ProductTextField';
 
 export default function HomePage() {
   const fetch = useAuthenticatedFetch();
   
   const [active, setActive] = useState(true);
+  //const [description, setDescription] = useState()
 
   const handleChange = useCallback(() => setActive(!active), [active]);
+
 
   const getProducts = async () => {
     try {
@@ -86,8 +89,7 @@ export default function HomePage() {
     
     <Page narrowWidth>
       <ProductSelector></ProductSelector>
-      <ProductsCard></ProductsCard>
-      <ProductTest></ProductTest>
+      <ProductTextField productId="8129604321555"></ProductTextField>
       <TitleBar title="One Click Ecom Store" primaryAction={null} />
       <Layout>
         <Layout.Section>

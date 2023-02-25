@@ -53,6 +53,25 @@ app.get('/api/2023-01/products.json', async (req, res) => {
   }
 });
 
+//Get a single product 
+app.get('/api/2022-07/products/:productId', async (req, res) => {
+
+  try {
+    const productId = Number(req.params.productId.split('.')[0]);
+
+    const response = await shopify.api.rest.Product.find({
+      session: res.locals.shopify.session,
+      id: productId,
+    });
+
+    res.status(200).send(response);
+
+  } catch(err) {
+
+    res.status(500).send(err);
+  }
+});
+
 //Update Single Product
 app.put('/api/2023-01/products/:productId', async (req, res) => {
  // console.log('id: ' + req.body.id + '\t\tdescription: ' + req.body.description)
