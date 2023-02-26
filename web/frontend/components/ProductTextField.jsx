@@ -1,17 +1,27 @@
 import {TextField} from '@shopify/polaris';
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useEffect, useRef} from 'react';
 import { useAppQuery, useAuthenticatedFetch } from "../hooks";
 
 export function ProductTextField(props) {
   const fetch = useAuthenticatedFetch();
 
-  const [description, setDescription] = useState()
+  const description = useRef()
   const [isLoading, setIsLoading] = useState(true);
-  const [value, setValue] = useState();
+  const [value, setValue] = useState('');
 
   const handleChange = useCallback((newValue) => setValue(newValue), []);
 
-  const {
+  useEffect(() => {
+    console.log('TESTING')
+    console.log('props.option')
+    console.log(props.option)
+    description.current = props.option ? props.option.label : ''
+    console.log(props.option)
+    //description.current = 'test' + props.option.label
+  });
+ // setValue(props.option.description);
+
+ /* const {
     data,
     refetch: refetchProductCount,
     isLoading: isLoadingCount,
@@ -22,17 +32,19 @@ export function ProductTextField(props) {
       onSuccess: (newData) => {
         console.log(newData);
         setIsLoading(false);
+        console.log('OPTION: ')
+        console.log(props.option);
         setDescription(newData.body_html)
         setValue(description);
         
       },
     },
-  });
+  });*/
 
   return (
     <TextField
       label="Description"
-      value={value}
+      value={description.current}
       onChange={handleChange}
       autoComplete="off"
     />
