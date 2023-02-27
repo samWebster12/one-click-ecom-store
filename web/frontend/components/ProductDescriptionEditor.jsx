@@ -8,36 +8,34 @@ import {
     Select,
     Link,
     Heading,
-    Button,
     Modal,
-    TextField
+    TextField,
+    Button
   } from "@shopify/polaris";
+
+  
   
   import { TitleBar } from "@shopify/app-bridge-react";
   
   import {useState, useCallback, useRef} from 'react';
-  
+
   import { useAuthenticatedFetch, useAppQuery } from "../hooks";
   
   import { trophyImage } from "../assets";
   
-  import { ProductSelector } from '../components/ProductSelector';
-  import { ProductsCard } from '../components/ProductsCard';
-  import { ProductTest } from '../components/ProductTest';
-  import { ProductTextField } from '../components/ProductTextField';
+  import { Toast } from "@shopify/app-bridge-react";
   
   export function ProductDescriptionEditor() {
     const fetch = useAuthenticatedFetch();
+    const emptyToastProps = { content: null };
 
+    const [toastProps, setToastProps] = useState(emptyToastProps);
     const [selectedOption, setSelectedOption] = useState();
+    
 
     //SELECT 
     const [options, setOptions] = useState([]);
     const [selected, setSelected] = useState();
-
-    //TEXT FIELD
-    const [textFieldValue, setTextFieldValue] = useState();
-    const handleTextChange = useCallback((newValue) => setTextFieldValue(newValue), []);
 
     const handleSelectChange = useCallback((value) => { 
         setSelected(value); 
@@ -47,10 +45,59 @@ import {
             option = opt;
           }
         })  
-
         setSelectedOption(option);
         setTextFieldValue(option.description)
       }, []);
+
+    //TEXT FIELD
+    const [textFieldValue, setTextFieldValue] = useState();
+    const handleTextChange = useCallback((newValue) => setTextFieldValue(newValue), []);
+
+    //BUTTON
+    const handleButtonClick = useCallback(async () => {
+        console.log('sending to chatgpt')
+        const response = await fetch('/chatgpt');
+        console.log(await response.json());
+       /* const api = new ChatGPTAPI({
+            apiKey: process.env.OPENAI_API_KEY
+        })
+        console.log('SENDING CHATGPT MESSAGE')
+        const res = await api.sendMessage('Hello World!')
+        console.log(res.text)*/
+
+        const data = {
+            id: selectedOption.id,
+            body_html: textFieldValue
+        }
+
+       /* try {
+            const response = await fetch('/api/2023-01/products/' + selectedOption.id + '.json', { 
+                method: 'PUT',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                setToastProps({ content: "Description succesfully updated!" });
+            } else {
+                setToastProps({
+                    content: "There was an error updating the description",
+                    error: true,
+                  });
+            }
+
+
+        } catch(err) {
+            console.log(err);
+        }*/
+
+        
+    })
+
+
+    //INITIAL FETCH
 
     const {
         data,
@@ -61,7 +108,7 @@ import {
         url: "/api/2023-01/products.json",
         reactQueryOptions: {
           onSuccess: (newData) => {
-            let options = [];
+            let retrievedOptions = [];
             newData.forEach((product) => {
               const option = {
                   label: product.title,
@@ -69,23 +116,26 @@ import {
                   description: product.body_html,
                   id: product.id
               }
-              options.push(option);
+              retrievedOptions.push(option);
             });
-    
-            setOptions(options);
-            console.log('setting selected option'); console.log(options[0])
-            setSelectedOption(options[0]);
-            setTextFieldValue(options[0].description)
+
+            setOptions(retrievedOptions);
+
+            setSelectedOption(retrievedOptions[0]);
+            setTextFieldValue(retrievedOptions[0].description)
             
           },
         },
       });
 
-  
+    //TOAST
+    const toastMarkup = toastProps.content && !isRefetchingCount && (
+        <Toast {...toastProps} onDismiss={() => setToastProps(emptyToastProps)} />
+      );
+
     return (
-      
-      <Page narrowWidth>
-        <Layout.Section>
+        <>
+          {toastMarkup}
           <Card sectioned>
             <Stack
               wrap={false}
@@ -94,8 +144,13 @@ import {
               alignment="left"
             >
               <Stack.Item fill>
-                <Select options={options} onChange={handleSelectChange} value={selected}></Select>
+                <TextContainer spacing="loose">
+                <Select label="Products" options={options} onChange={handleSelectChange} value={selected}></Select>
                 <TextField label="description" value={textFieldValue} onChange={handleTextChange} autoComplete="off"></TextField>
+
+
+                    <Button onClick={handleButtonClick} primary={true}>Update Description</Button>
+                </TextContainer>
             
               </Stack.Item>
 
@@ -111,7 +166,6 @@ import {
               
             </Stack>
           </Card>
-        </Layout.Section>
-      </Page>
+        </>
     );
   }

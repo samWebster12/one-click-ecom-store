@@ -3,7 +3,7 @@ import { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
 import serveStatic from "serve-static";
-
+import { ChatGPTAPI } from 'chatgpt'
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
@@ -37,6 +37,18 @@ app.use("/api/*", shopify.validateAuthenticatedSession());
 app.use(express.json());
 
 //------------------------------ MY ENDPOINTS ---------------------------------------------------------------
+const OPENAI_API_KEY='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' //temporary
+app.get('/chatgpt', async (req, res) => {
+  const api = new ChatGPTAPI({
+    apiKey: OPENAI_API_KEY
+  })
+
+  const response = await api.sendMessage('Hello World!')
+  console.log(response.text)
+  res.end(JSON.stringify({res: response.text}));
+})
+
+//------------------------------ MY SHOPIFY ENDPOINTS -------------------------------------------------------
 
 //Get all products
 app.get('/api/2023-01/products.json', async (req, res) => {
@@ -76,13 +88,9 @@ app.get('/api/2022-07/products/:productId', async (req, res) => {
 app.put('/api/2023-01/products/:productId', async (req, res) => {
  // console.log('id: ' + req.body.id + '\t\tdescription: ' + req.body.description)
   try {
-    const productId = req.params.productId.split('.')[0];
-    console.log('update product: ' + productId);
     const product = new shopify.api.rest.Product({session: res.locals.shopify.session});
-    product.id = Number(productId);
-
-    product.body_html = "Brand new description";
-
+    product.id = req.body.id; //Number(productId)
+    product.body_html = req.body.body_html;
 
     const response = await product.save({
       update: true,

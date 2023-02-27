@@ -19,6 +19,7 @@ import { useAuthenticatedFetch } from "../hooks";
 
 import { trophyImage } from "../assets";
 
+
 import { ProductSelector } from '../components/ProductSelector';
 import { ProductsCard } from '../components/ProductsCard';
 import { ProductTest } from '../components/ProductTest';
@@ -37,7 +38,6 @@ export default function HomePage() {
   return (
     
     <Page narrowWidth>
-      <ProductDescriptionEditor></ProductDescriptionEditor>
       <TitleBar title="One Click Ecom Store" primaryAction={null} />
       <Layout>
         <Layout.Section>
@@ -74,27 +74,21 @@ export default function HomePage() {
           </Card>
         </Layout.Section>
 
-      <Modal
-        activator={modal_activator}
-        open={!active}
-        onClose={handleChange}
-        title="Lets Create Your Product Descriptions"
-        primaryAction={{
-          content: 'Generate New Product Descriptions',
-          onAction: () => {} ,
-        }}
+        <Modal
+          activator={modal_activator}
+          open={!active}
+          onClose={handleChange}
+          title="Lets Create Your Product Descriptions"
+        /*  primaryAction={{
+            content: 'Generate New Product Descriptions',
+            onAction: () => {} ,
+          }}*/
 
-      >
-        <Modal.Section>
-          <TextContainer>
-            <p>
-              To get started, lets generate some new products
-              descriptions for you. We will use chatgpt and take
-              your products and generate engaging copy for them
-            </p>
-          </TextContainer>
-        </Modal.Section>
-      </Modal>
+        >
+          <Modal.Section>
+            <ProductDescriptionEditor></ProductDescriptionEditor>
+          </Modal.Section>
+        </Modal>
 
       </Layout>
     </Page>
