@@ -55,22 +55,27 @@ import {
 
     //BUTTON
     const handleButtonClick = useCallback(async () => {
-        console.log('sending to chatgpt')
+        console.log('sending to chatgpt');
+        try {
+          const response = await fetch('/api/chatgpt', {
+            method: 'POST',
+            body: JSON.stringify({message: 'what is your name?' })
+            
+          });
+          const chatgpt = await response.json();
+          console.log(chatgpt.response);
+        } catch (e) {
+          console.log(e);
+        }
         const response = await fetch('/chatgpt');
-        console.log(await response.json());
-       /* const api = new ChatGPTAPI({
-            apiKey: process.env.OPENAI_API_KEY
-        })
-        console.log('SENDING CHATGPT MESSAGE')
-        const res = await api.sendMessage('Hello World!')
-        console.log(res.text)*/
+        
 
-        const data = {
+    /*    const data = {
             id: selectedOption.id,
             body_html: textFieldValue
         }
 
-       /* try {
+        try {
             const response = await fetch('/api/2023-01/products/' + selectedOption.id + '.json', { 
                 method: 'PUT',
                 headers: {

@@ -38,14 +38,19 @@ app.use(express.json());
 
 //------------------------------ MY ENDPOINTS ---------------------------------------------------------------
 const OPENAI_API_KEY='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' //temporary
-app.get('/chatgpt', async (req, res) => {
-  const api = new ChatGPTAPI({
-    apiKey: OPENAI_API_KEY
-  })
+app.post('/api/chatgpt', async (req, res) => {
+  try {
+    const api = new ChatGPTAPI({
+      apiKey: OPENAI_API_KEY
+    })
+   console.log('Question: ' + req.body)
+    const response = await api.sendMessage(req.body.message);
+    console.log(response);
+    res.status(200).json({ response: response.text});
+  } catch (e) {
+    console.log(e);
+  }
 
-  const response = await api.sendMessage('Hello World!')
-  console.log(response.text)
-  res.end(JSON.stringify({res: response.text}));
 })
 
 //------------------------------ MY SHOPIFY ENDPOINTS -------------------------------------------------------
