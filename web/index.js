@@ -43,7 +43,6 @@ app.post('/api/chatgpt', async (req, res) => {
     const api = new ChatGPTAPI({
       apiKey: OPENAI_API_KEY
     })
-   console.log('Question: ' + req.body)
     const response = await api.sendMessage(req.body.message);
     console.log(response);
     res.status(200).json({ response: response.text});
