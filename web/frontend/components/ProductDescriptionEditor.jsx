@@ -46,19 +46,6 @@ import {
 
     //INITIAL FETCH
 
-    useEffect(() => {
-        if (options) {
-            setIsLoading(false);
-        console.log('options');
-        console.log(options);
-        }
-
-        /*if (selectedOption) { 
-          //  console.log(selectedOption)
-            setDescriptionFieldValue(selectedOption.description);
-        }*/
-    }, [options])
-
     const {
         data,
         refetch: refetchProductCount,
@@ -78,16 +65,13 @@ import {
               }
               retrievedOptions.push(option);
             });
-          //  console.log(options)
+
             setOptions(retrievedOptions);
-        //    console.log(options)
+
             setSelectedOption(retrievedOptions[0]);
-          //  setDescriptionFieldValue(retrievedOptions[0].description);
+            setDescriptionFieldValue(retrievedOptions[0].description);
 
-         //   console.log(retrievedOptions);
-          //  console.log(options)
-
-           // setIsLoading(false);
+            setIsLoading(false);
             
           },
         },
@@ -96,9 +80,10 @@ import {
 
     //SELECT 
 
-    const handleSelectChange = useCallback((value) => { 
+    const handleSelectChange = (value) => { 
         setSelected(value); 
         let option = {};
+        console.log('options: ')
         console.log(options)
         options.forEach((opt) => {
           if (value == opt.label) {
@@ -107,7 +92,7 @@ import {
         })  
         setSelectedOption(option);
         setDescriptionFieldValue(option.description)
-      }, []);
+      };
 
     //KEYWORD FIELD
     const [keywordFieldValue, setKeywordFieldValue] = useState('');
