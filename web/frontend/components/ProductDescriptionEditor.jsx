@@ -13,14 +13,15 @@ import {
     Button,
     ButtonGroup,
     ResourceList,
-    ResourceItem
+    ResourceItem,
+    Spinner
   } from "@shopify/polaris";
 
   
   
   import { TitleBar } from "@shopify/app-bridge-react";
   
-  import {useState, useCallback, useRef} from 'react';
+  import {useCallback, useRef, useState, useEffect} from 'react';
 
   import { useAuthenticatedFetch, useAppQuery } from "../hooks";
   
@@ -36,15 +37,69 @@ import {
 
     const [toastProps, setToastProps] = useState(emptyToastProps);
     const [selectedOption, setSelectedOption] = useState();
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    //SELECT
+    const [options, setOptions] = useState();
+    const [selected, setSelected] = useState();
+
+    //INITIAL FETCH
+
+    useEffect(() => {
+        if (options) {
+            setIsLoading(false);
+        console.log('options');
+        console.log(options);
+        }
+
+        /*if (selectedOption) { 
+          //  console.log(selectedOption)
+            setDescriptionFieldValue(selectedOption.description);
+        }*/
+    }, [options])
+
+    const {
+        data,
+        refetch: refetchProductCount,
+        isLoading: isLoadingCount,
+        isRefetching: isRefetchingCount,
+      } = useAppQuery({
+        url: "/api/2023-01/products.json",
+        reactQueryOptions: {
+          onSuccess: (newData) => {
+            let retrievedOptions = [];
+            newData.forEach((product) => {
+              const option = {
+                  label: product.title,
+                  value: product.title,
+                  description: product.body_html,
+                  id: product.id
+              }
+              retrievedOptions.push(option);
+            });
+          //  console.log(options)
+            setOptions(retrievedOptions);
+        //    console.log(options)
+            setSelectedOption(retrievedOptions[0]);
+          //  setDescriptionFieldValue(retrievedOptions[0].description);
+
+         //   console.log(retrievedOptions);
+          //  console.log(options)
+
+           // setIsLoading(false);
+            
+          },
+        },
+      });
     
 
     //SELECT 
-    const [options, setOptions] = useState([]);
-    const [selected, setSelected] = useState();
 
     const handleSelectChange = useCallback((value) => { 
         setSelected(value); 
         let option = {};
+        console.log(options)
         options.forEach((opt) => {
           if (value == opt.label) {
             option = opt;
@@ -145,36 +200,6 @@ import {
     })
 
 
-    //INITIAL FETCH
-
-    const {
-        data,
-        refetch: refetchProductCount,
-        isLoading: isLoadingCount,
-        isRefetching: isRefetchingCount,
-      } = useAppQuery({
-        url: "/api/2023-01/products.json",
-        reactQueryOptions: {
-          onSuccess: (newData) => {
-            let retrievedOptions = [];
-            newData.forEach((product) => {
-              const option = {
-                  label: product.title,
-                  value: product.title,
-                  description: product.body_html,
-                  id: product.id
-              }
-              retrievedOptions.push(option);
-            });
-
-            setOptions(retrievedOptions);
-
-            setSelectedOption(retrievedOptions[0]);
-            setDescriptionFieldValue(retrievedOptions[0].description)
-            
-          },
-        },
-      });
 
     //TOAST
     const toastMarkup = toastProps.content && !isRefetchingCount && (
@@ -184,7 +209,10 @@ import {
     return (
         <>
           {toastMarkup}
-          <Card sectioned>
+          { !isLoading ? <Card 
+            sectioned
+            loading={isLoading}
+            >
             <Stack
               wrap={false}
               spacing="extraTight"
@@ -247,7 +275,7 @@ import {
               
               
             </Stack>
-          </Card>
+          </Card> : <Stack alignment="center" distribution="center"><Stack.Item fill><Spinner accessibilityLabel="Spinner example" size="large" /></Stack.Item></Stack> }
         </>
     );
   }

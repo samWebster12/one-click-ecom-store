@@ -31,6 +31,7 @@ export default function HomePage() {
   
   const [active, setActive] = useState(true);
 
+
   const handleChange = useCallback(() => setActive(!active), [active]);
 
   const modal_activator = useRef();
