@@ -83,8 +83,6 @@ import {
     const handleSelectChange = (value) => { 
         setSelected(value); 
         let option = {};
-        console.log('options: ')
-        console.log(options)
         options.forEach((opt) => {
           if (value == opt.label) {
             option = opt;
@@ -113,7 +111,6 @@ import {
 
     //DELETE KEYWORD BUTTON
     const handleDeleteKeyword = useCallback((keywordToDelete) => {
-        console.log(keywordToDelete)
         setKeywords(keywords.filter(keyword => keyword !== keywordToDelete))
     })
 
