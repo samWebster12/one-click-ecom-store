@@ -1,6 +1,55 @@
-<span style="color: {{ block.settings.color }}">
-App blocks let you build powerful integrations with online store themes.
-</span>
+<span>{{block.settings.text}}</span>
+
+
+{% if block.settings.gen_copy == true %}
+  <script> 
+    (async () => {
+      console.log('sending to chatgpt');
+      let message = 'Generate a product description for a product called misty glitter';
+      console.log(message);
+
+      try {
+      /*  const response = await fetch('/api/chatgpt', {
+          method: 'POST',
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message })
+          
+        });
+
+        const chatgpt = await response.json();*/
+        //const response = await fetch('https://catfact.ninja/fact');
+       // console.log(await response.json());
+
+        const params = {
+          prompt: "How are you?",
+          model: "text-davinci-003",
+          max_tokens: 10,
+          temperature: 0,
+        };      
+        const apiKey = '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';
+        const result = await fetch('https://api.openai.com/v1/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': "Bearer " + apiKey,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(params)
+        });
+        console.log('RESULT: ');
+        console.log(result)
+        console.log(result.data.choices[0].text);
+
+      } catch (e) {
+        console.log(e);
+      }
+    })();
+    
+  </script>
+{% endif %}
+
 {% render "app_snippet" %}
 {% schema %}
   {
@@ -12,7 +61,18 @@ App blocks let you build powerful integrations with online store themes.
     "stylesheet": "app.css",
     "javascript": "app.js",
     "settings": [
-        { "label": "Color", "id": "color", "type": "color", "default": "#000000" }
+        { 
+          "label": "Text", 
+          "id": "text", "type": 
+          "textarea", "default": 
+          "my text area" 
+        },
+        {
+          "label": "Generate Copy",
+          "type": "checkbox",
+          "id": "gen_copy",
+          "default": false
+        }
     ]
   }
 {% endschema %}

@@ -52,6 +52,10 @@ app.post('/api/chatgpt', async (req, res) => {
 
 })
 
+app.get('/api/test', async (req, res) =>{
+  res.status(200).send('this is my test');
+})
+
 //------------------------------ MY SHOPIFY ENDPOINTS -------------------------------------------------------
 
 //Get all products
@@ -109,7 +113,31 @@ app.put('/api/2023-01/products/:productId', async (req, res) => {
 })
 
 
+app.get('/api/2023-01/themes/144745857299/assets.json', async (req, res) => {
+  try {
+    const letssee = await shopify.api.rest.Asset.all({
+      session: res.locals.shopify.session,
+      theme_id: 144745857299,
+    //  asset: {"key": "layout/password.liquid"},
+    });
+    let i = 0;
+    for (i = 0; i < letssee.length; i++) {
+      console.log(letssee[i].content_type)
+      if (letssee[i].content_type == 'application/x-liquid') {
+        console.log(letssee[i])
+      }
+    }
 
+    //console.log(letssee[i]);
+    //console.log(letssee);
+
+
+  } catch(e) {
+    console.log('ERROR!');
+    console.log(e);
+  }
+  
+});
 
 
 //---------------------------------------------------------------------------------------------

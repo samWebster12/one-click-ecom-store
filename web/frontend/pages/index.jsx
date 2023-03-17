@@ -31,6 +31,18 @@ export default function HomePage() {
   
   const [active, setActive] = useState(true);
 
+  /*(async () => {
+    try {
+      const response = await fetch('/api/2023-01/themes/144745857299/assets.json');
+      console.log('RESPONSE:')
+      console.log(response);
+      
+
+    } catch (e) {
+      console.log(e);
+    }
+    
+  })();*/
 
   const handleChange = useCallback(() => setActive(!active), [active]);
 
