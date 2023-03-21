@@ -7,6 +7,7 @@ import { ChatGPTAPI } from 'chatgpt'
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
+import cors from 'cors';
 
 const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 
@@ -16,11 +17,14 @@ const STATIC_PATH =
     : `${process.cwd()}/frontend/`;
 
 const app = express();
+app.use(cors())
 
+const shoutHello = (req, res, next) => { console.log('hello'); next() }
 // Set up Shopify authentication and webhook handling
-app.get(shopify.config.auth.path, shopify.auth.begin());
+app.get(shopify.config.auth.path, shoutHello, shopify.auth.begin());
 app.get(
   shopify.config.auth.callbackPath,
+  shoutHello,
   shopify.auth.callback(),
   shopify.redirectToShopifyOrAppRoot()
 );
