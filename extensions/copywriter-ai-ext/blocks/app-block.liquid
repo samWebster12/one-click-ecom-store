@@ -1,13 +1,13 @@
 <div id="section_root">
-  <span>{{block.settings.text}}</span>
+  <span>{{ block.settings.text }}</span>
 </div>
 
 
 {% if block.settings.gen_copy == true %}
-  
-  <script> 
 
-  /*  (async () => {
+  <script>
+
+    /*  (async () => {
       console.log('sending to chatgpt');
       let message = 'Generate a product description for a product called misty glitter';
       console.log(message);
@@ -60,13 +60,25 @@
 
     (async () => {
       try {
-        const response = await fetch('http://107.152.41.27:3300');
-        console.log(response);
-      } catch(e) {
+        console.log('SENDING REQUEST')
+        let response;
+        try {
+          response = await fetch('https://our-test-store-569.myshopify.com/apps/json', {
+            method: 'GET',
+           /* headers: {
+              'ngrok-skip-browser-warning': 'test'
+            }*/
+          });
+          console.log(await response.json());
+          //console.log(await response.json())
+        } catch(e) {
+          console.log('ERROR: ' + e)
+        }
+        
+      } catch (e) {
         console.log(e)
       }
     })();
-    
   </script>
 {% endif %}
 
@@ -81,24 +93,22 @@
     "stylesheet": "app.css",
     "javascript": "app.js",
     "settings": [
-        { 
-          "label": "Text", 
-          "id": "text", 
-          "type": "textarea", 
-          "default": "my text area" 
-        },
-        {
-          "label": "Generate Copy",
-          "type": "checkbox",
-          "id": "gen_copy",
-          "default": false
-        },
-        {
-          "label": "Commit New Text",
-          "type": "checkbox",
-          "id": "commit_copy",
-          "default": false
-        }
+      {
+        "label": "Text",
+        "id": "text",
+        "type": "textarea",
+        "default": "my text area"
+      }, {
+        "label": "Generate Copy",
+        "type": "checkbox",
+        "id": "gen_copy",
+        "default": false
+      }, {
+        "label": "Commit New Text",
+        "type": "checkbox",
+        "id": "commit_copy",
+        "default": false
+      }
     ]
   }
 {% endschema %}
