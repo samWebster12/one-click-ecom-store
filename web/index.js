@@ -34,7 +34,7 @@ app.post(
 // All endpoints after this point will require an active session
 
 
-app.use("/api/*", shopify.validateAuthenticatedSession());
+app.use("/api/backend/*", shopify.validateAuthenticatedSession()); //DELETE FOR APP PROXY, KEEP FOR EVERYTHING ELSE
 
 app.use(express.json());
 
@@ -44,7 +44,7 @@ app.get('/api/proxyroute', (req, res) => {
 
 //------------------------------ MY ENDPOINTS ---------------------------------------------------------------
 const OPENAI_API_KEY='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' //temporary
-app.post('/api/chatgpt', async (req, res) => {
+app.post('/api/backend/chatgpt', async (req, res) => {
   try {
     const api = new ChatGPTAPI({
       apiKey: OPENAI_API_KEY
@@ -58,14 +58,14 @@ app.post('/api/chatgpt', async (req, res) => {
 
 })
 
-app.get('/api/test', async (req, res) =>{
+app.get('/api/backend/test', async (req, res) =>{
   res.status(200).send('this is my test');
 })
 
 //------------------------------ MY SHOPIFY ENDPOINTS -------------------------------------------------------
 
 //Get all products
-app.get('/api/2023-01/products.json', async (req, res) => {
+app.get('/api/backend/2023-01/products.json', async (req, res) => {
   console.log('pRODUCTS JSON: ' + res.locals.shopify.session)
   try {
     const response = await shopify.api.rest.Product.all({
@@ -81,7 +81,7 @@ app.get('/api/2023-01/products.json', async (req, res) => {
 });
 
 //Get a single product 
-app.get('/api/2022-07/products/:productId', async (req, res) => {
+app.get('/api/backend/2022-07/products/:productId', async (req, res) => {
 
   try {
     const productId = Number(req.params.productId.split('.')[0]);
@@ -100,7 +100,7 @@ app.get('/api/2022-07/products/:productId', async (req, res) => {
 });
 
 //Update Single Product
-app.put('/api/2023-01/products/:productId', async (req, res) => {
+app.put('/api/backend/2023-01/products/:productId', async (req, res) => {
  // console.log('id: ' + req.body.id + '\t\tdescription: ' + req.body.description)
   try {
     const product = new shopify.api.rest.Product({session: res.locals.shopify.session});
@@ -120,7 +120,7 @@ app.put('/api/2023-01/products/:productId', async (req, res) => {
 })
 
 
-app.get('/api/2023-01/themes/144745857299/assets.json', async (req, res) => {
+app.get('/api/backend/2023-01/themes/144745857299/assets.json', async (req, res) => {
   try {
     const letssee = await shopify.api.rest.Asset.all({
       session: res.locals.shopify.session,
@@ -149,7 +149,7 @@ app.get('/api/2023-01/themes/144745857299/assets.json', async (req, res) => {
 
 //---------------------------------------------------------------------------------------------
 
-app.get("/api/products/count", async (_req, res) => {
+app.get("/api/backend/products/count", async (_req, res) => {
   const countData = await shopify.api.rest.Product.count({
     session: res.locals.shopify.session,
   });
@@ -157,7 +157,7 @@ app.get("/api/products/count", async (_req, res) => {
 //  res.status(200).end('countdata');
 });
 
-app.get("/api/products/create", async (_req, res) => {
+app.get("/api/backend/products/create", async (_req, res) => {
   let status = 200;
   let error = null;
 

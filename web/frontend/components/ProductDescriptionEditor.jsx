@@ -52,7 +52,7 @@ import {
         isLoading: isLoadingCount,
         isRefetching: isRefetchingCount,
       } = useAppQuery({
-        url: "/api/2023-01/products.json",
+        url: "/api/backend/2023-01/products.json",
         reactQueryOptions: {
           onSuccess: (newData) => {
             let retrievedOptions = [];
@@ -130,7 +130,7 @@ import {
         console.log(message);
 
         try {
-          const response = await fetch('/api/chatgpt', {
+          const response = await fetch('/api/backend/chatgpt', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
@@ -156,7 +156,7 @@ import {
         }
 
         try {
-            const response = await fetch('/api/2023-01/products/' + selectedOption.id + '.json', { 
+            const response = await fetch('/api/backend/2023-01/products/' + selectedOption.id + '.json', { 
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json",

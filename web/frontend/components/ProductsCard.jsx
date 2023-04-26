@@ -21,7 +21,7 @@ export function ProductsCard() {
     isLoading: isLoadingCount,
     isRefetching: isRefetchingCount,
   } = useAppQuery({
-    url: "/api/products/count",
+    url: "/api/backend/products/count",
     reactQueryOptions: {
       onSuccess: () => {
         setIsLoading(false);
@@ -35,7 +35,7 @@ export function ProductsCard() {
 
   const handlePopulate = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/products/create");
+    const response = await fetch("/api/backend/products/create");
 
     if (response.ok) {
       await refetchProductCount();
