@@ -19,12 +19,10 @@ const STATIC_PATH =
 const app = express();
 app.use(cors())
 
-const shoutHello = (req, res, next) => { console.log('hello'); next() }
 // Set up Shopify authentication and webhook handling
-app.get(shopify.config.auth.path, shoutHello, shopify.auth.begin());
+app.get(shopify.config.auth.path, shopify.auth.begin());
 app.get(
   shopify.config.auth.callbackPath,
-  shoutHello,
   shopify.auth.callback(),
   shopify.redirectToShopifyOrAppRoot()
 );
@@ -35,10 +33,14 @@ app.post(
 
 // All endpoints after this point will require an active session
 
-// Validate Session Id Manually Since the Default doesn't work
+
 app.use("/api/*", shopify.validateAuthenticatedSession());
 
 app.use(express.json());
+
+app.get('/api/proxyroute', (req, res) => { 
+  res.status(200).end('this is my test');
+})
 
 //------------------------------ MY ENDPOINTS ---------------------------------------------------------------
 const OPENAI_API_KEY='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' //temporary
@@ -64,11 +66,12 @@ app.get('/api/test', async (req, res) =>{
 
 //Get all products
 app.get('/api/2023-01/products.json', async (req, res) => {
+  console.log('pRODUCTS JSON: ' + res.locals.shopify.session)
   try {
     const response = await shopify.api.rest.Product.all({
       session: res.locals.shopify.session
     });
-
+    console.log('sent PRODUCTS JSON')
     res.status(200).send(response);
 
   } catch(err) {
@@ -151,6 +154,7 @@ app.get("/api/products/count", async (_req, res) => {
     session: res.locals.shopify.session,
   });
   res.status(200).send(countData);
+//  res.status(200).end('countdata');
 });
 
 app.get("/api/products/create", async (_req, res) => {
