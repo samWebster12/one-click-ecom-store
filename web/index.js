@@ -7,6 +7,7 @@ import { ChatGPTAPI } from 'chatgpt'
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
+import { Shopify } from '@shopify/shopify-api';
 import cors from 'cors';
 
 const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
@@ -35,10 +36,22 @@ app.post(
 
 
 app.use("/api/backend/*", shopify.validateAuthenticatedSession()); //DELETE FOR APP PROXY, KEEP FOR EVERYTHING ELSE
+app.use("/api/proxyroute/*", async (req, res) =>  {
+  const session = await Shopify.Utils.loadOfflineSession('our-test-store-569.myshopify.com');
+  const client = new Shopify.Clients.Graphql(session.shop, session.accessToken);
+
+  const shop = await client.query({
+    data: `{
+      shop {
+        name
+      }
+    }`
+  })
+})
 
 app.use(express.json());
 
-app.get('/api/proxyroute', (req, res) => { 
+app.get('/api/proxyroute/proxy', (req, res) => { 
   res.status(200).end('this is my test');
 })
 
