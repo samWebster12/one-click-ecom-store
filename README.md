@@ -1,4 +1,4 @@
-# Store Editor ChatGPT Integration
+# Shopify Store Editor ChatGPT Integration
 
 ## Main App - Product Description Editor
 The main app fetches the products a merchant has a store and presents the merchant with an interface to generate a new product description using chatgpt. The merchant can also add keywords they want to include in the product description.
